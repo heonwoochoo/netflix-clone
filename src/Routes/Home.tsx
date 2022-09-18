@@ -288,7 +288,7 @@ function Home() {
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [bigMovieId_, setBigMovieId] = useRecoilState(bigMovieId);
-  const bigMovieMatch = useMatch("/movie/:id");
+  const bigMovieMatch = useMatch(`${process.env.PUBLIC_URL}/movie/:id`);
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "topRated"],
     getTopRatedMovies
@@ -345,11 +345,11 @@ function Home() {
     setLeaving((prev) => !prev);
   };
   const onBoxClicked = (movieId: number, type: string) => {
-    navigate(`/movie/${movieId}${type}`);
+    navigate(`${process.env.PUBLIC_URL}/movie/${movieId}${type}`);
   };
   const onOverlayClick = () => {
     setIsShowOverview(false);
-    navigate(`/`);
+    navigate(`${process.env.PUBLIC_URL}/`);
   };
   const clickedMovie =
     bigMovieMatch?.params.id &&
@@ -366,9 +366,7 @@ function Home() {
     const id = bigMovieMatch.params.id?.replace(/[^0-9]/g, "") as string;
     setBigMovieId(id);
   }
-  useEffect(() => {
-    
-  }, [window.innerWidth]);
+  useEffect(() => {}, [window.innerWidth]);
   return (
     <Wrapper>
       {isLoading ? (

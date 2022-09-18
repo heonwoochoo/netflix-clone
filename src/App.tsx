@@ -10,11 +10,17 @@ function App() {
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="tv" element={<Tv />} />
-        <Route path="tv/:id" element={<Tv />} />
-        <Route path="search/*" element={<Search />} />
-        <Route path="movie/:id" element={<Home />} />
-        <Route path="/" element={<Home />} />
+        <Route path={`${process.env.PUBLIC_URL}/tv`} element={<Tv />} />
+        <Route path={`${process.env.PUBLIC_URL}/tv/:id`} element={<Tv />} />
+        <Route
+          path={`${process.env.PUBLIC_URL}/search/*`}
+          element={<Search />}
+        />
+        <Route
+          path={`${process.env.PUBLIC_URL}/movie/:id`}
+          element={<Home />}
+        />
+        <Route path={`${process.env.PUBLIC_URL}/`} element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

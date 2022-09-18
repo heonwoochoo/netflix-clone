@@ -193,7 +193,9 @@ function Search() {
                 <Keyword
                   key={i}
                   onClick={() => {
-                    navigate(`search/?keyword=${v.name}`);
+                    navigate(
+                      `${process.env.PUBLIC_URL}/search/?keyword=${v.name}`
+                    );
                   }}
                 >
                   {v.name ? v.name : "없음"}

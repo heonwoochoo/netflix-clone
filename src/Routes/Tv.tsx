@@ -5,7 +5,14 @@ import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { getTVData, ITVData } from "../api";
-import { bigTvId } from "../atom";
+import {
+  atIndexState,
+  bigTvId,
+  oaIndexState,
+  poIndexState,
+  trIndexState,
+} from "../atom";
+import Slider from "../Components/Slider";
 import { makeImagePath, makeStar, shortText } from "../utils";
 const Wrapper = styled.div`
   background-color: black;
@@ -70,7 +77,7 @@ const Back = styled(Front)`
   left: 0;
 `;
 
-const Slider = styled.div`
+const Container = styled.div`
   margin: 0 auto;
   margin-bottom: 300px;
   top: -100px;
@@ -342,17 +349,17 @@ function Tv() {
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [bigTvId_, setBigTvId] = useRecoilState(bigTvId);
-  const bigTvMatch = useMatch("/tv/:id");
+  const bigTvMatch = useMatch(`${process.env.PUBLIC_URL}/tv/:id`);
   const airingToday = useQuery<ITVData>(["airing_today"], getTVData);
   const onTheAir = useQuery<ITVData>(["on_the_air"], getTVData);
   const popular = useQuery<ITVData>(["popular"], getTVData);
   const topRated = useQuery<ITVData>(["top_rated"], getTVData);
   const detail = useQuery<ITVDetail>([bigTvId_], getTVData);
   const [isFront, setIsFront] = useState(true);
-  const [atIndex, setAtIndex] = useState(0);
-  const [oaIndex, setOaIndex] = useState(0);
-  const [poIndex, setPoIndex] = useState(0);
-  const [trIndex, setTrIndex] = useState(0);
+  const [atIndex, setAtIndex] = useRecoilState(atIndexState);
+  const [oaIndex, setOaIndex] = useRecoilState(oaIndexState);
+  const [poIndex, setPoIndex] = useRecoilState(poIndexState);
+  const [trIndex, setTrIndex] = useRecoilState(trIndexState);
   const [leaving, setLeaving] = useState(false);
   const [isShowOverview, setIsShowOverview] = useState(false);
   const frontButton = (e: React.MouseEvent<HTMLElement>) => {
@@ -397,7 +404,7 @@ function Tv() {
   };
   const onOverlayClick = () => {
     setIsShowOverview(false);
-    navigate(`/tv`);
+    navigate(`${process.env.PUBLIC_URL}/tv`);
   };
   const clickedTv =
     bigTvMatch?.params.id &&
@@ -424,7 +431,7 @@ function Tv() {
     sliderIndex: number
   ) {
     return (
-      <Slider>
+      <Container>
         <Front
           style={{ height: "170px", top: "43px" }}
           onClick={frontButton}
@@ -489,14 +496,26 @@ function Tv() {
               ))}
           </Row>
         </AnimatePresence>
-      </Slider>
+      </Container>
     );
   }
+  const oaInfo = onTheAir.data?.results.slice(
+    oaIndex * offset,
+    oaIndex * offset + offset
+  );
+  const poInfo = popular.data?.results.slice(
+    poIndex * offset,
+    poIndex * offset + offset
+  );
+  const trInfo = topRated.data?.results.slice(
+    trIndex * offset,
+    trIndex * offset + offset
+  );
   return (
     <Wrapper>
-      {airingToday.isLoading ||
-      onTheAir.isLoading ||
-      popular.isLoading ||
+      {airingToday.isLoading &&
+      onTheAir.isLoading &&
+      popular.isLoading &&
       topRated.isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
@@ -509,7 +528,7 @@ function Tv() {
             <Title>{airingToday.data?.results[0].name}</Title>
             <Overview>{airingToday.data?.results[0].overview}</Overview>
           </Banner>
-          <Slider>
+          <Container>
             <Front
               style={{ height: "170px", top: "43px" }}
               onClick={frontButton}
@@ -569,10 +588,31 @@ function Tv() {
                   ))}
               </Row>
             </AnimatePresence>
-          </Slider>
-          {paintSlider(onTheAir, "On Air", "onTheAir", oaIndex)}
-          {paintSlider(popular, "인기 프로그램", "popular", poIndex)}
-          {paintSlider(topRated, "가장 많이 본 프로그램", "topRated", trIndex)}
+          </Container>
+          {oaInfo && (
+            <Slider
+              info={oaInfo}
+              title="On Air"
+              sliderType="onTheAir"
+              sliderIndex={oaIndex}
+            />
+          )}
+          {poInfo && (
+            <Slider
+              info={poInfo}
+              title="인기 프로그램"
+              sliderType="popular"
+              sliderIndex={poIndex}
+            />
+          )}
+          {trInfo && (
+            <Slider
+              info={trInfo}
+              title="가장 많이 본 프로그램"
+              sliderType="topRated"
+              sliderIndex={trIndex}
+            />
+          )}
           <AnimatePresence>
             {bigTvMatch ? (
               <>

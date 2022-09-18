@@ -105,8 +105,8 @@ interface IForm {
 
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const homeMatch = useMatch("/");
-  const tvMatch = useMatch("tv");
+  const homeMatch = useMatch(`${process.env.PUBLIC_URL}/`);
+  const tvMatch = useMatch(`${process.env.PUBLIC_URL}/tv`);
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const navigate = useNavigate();
@@ -141,7 +141,7 @@ function Header() {
     },
   };
   const onValid = (data: IForm) => {
-    navigate(`search/?keyword=${data.keyword}`);
+    navigate(`${process.env.PUBLIC_URL}/search/?keyword=${data.keyword}`);
     setPage(1);
   };
   return (
@@ -162,11 +162,11 @@ function Header() {
         </Logo>
         <Items>
           <Item>
-            <Link to="/">Home</Link>
+            <Link to={`${process.env.PUBLIC_URL}/`}>Home</Link>
             {homeMatch && <Circle layoutId="circle" />}
           </Item>
           <Item>
-            <Link to="/tv">Tv Shows</Link>
+            <Link to={`${process.env.PUBLIC_URL}/tv`}>Tv Shows</Link>
             {tvMatch && <Circle layoutId="circle" />}
           </Item>
         </Items>

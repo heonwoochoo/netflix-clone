@@ -8,7 +8,7 @@ interface ITopRatedMovie {
   id: number;
   vote_average: number;
 }
-interface ITVResult {
+export interface ITVResult {
   backdrop_path: string;
   overview: string;
   poster_path: string;

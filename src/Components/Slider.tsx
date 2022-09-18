@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilState } from "recoil";
 import styled from "styled-components";
 import { ITVResult } from "../api";
 import {
@@ -57,6 +57,16 @@ const BoxContainer = styled(motion.div)`
   height: 160px;
   width: 220px;
   background-color: transparent;
+`;
+const Rank = styled.h1`
+  font-size: 200px;
+  font-weight: 900;
+  letter-spacing: -30px;
+  position: absolute;
+  -webkit-text-stroke: 5px grey;
+  color: black;
+  left: -20px;
+  top: -50px;
 `;
 const Row = styled(motion.div)`
   display: grid;
@@ -127,16 +137,17 @@ const infoVariants = {
     },
   },
 };
-interface ISlider {
+export interface ISlider {
   info: ITVResult[];
   title: string;
   sliderType: string;
   sliderIndex: number;
+  showRank: boolean;
 }
-function Slider({ info, title, sliderType, sliderIndex }: ISlider) {
+function Slider({ info, title, sliderType, sliderIndex, showRank }: ISlider) {
   const navigate = useNavigate();
   const [isFront, setIsFront] = useState(true);
-  const setAtIndex = useSetRecoilState(atIndexState);
+  const [atIndex, setAtIndex] = useRecoilState(atIndexState);
   const setOaIndex = useSetRecoilState(oaIndexState);
   const setPoIndex = useSetRecoilState(poIndexState);
   const setTrIndex = useSetRecoilState(trIndexState);
@@ -206,11 +217,12 @@ function Slider({ info, title, sliderType, sliderIndex }: ISlider) {
           transition={{ type: "tween" }}
           key={sliderIndex}
         >
-          {info.map((tv: any) => (
+          {info.map((tv: any, i) => (
             <BoxContainer
               style={{ width: "220px", height: "130px" }}
               key={String(tv.id) + sliderType}
             >
+              {showRank && <Rank>{i + atIndex * 6 + 1}</Rank>}
               <Box
                 layoutId={String(tv.id) + sliderType}
                 onClick={() => {
@@ -221,9 +233,9 @@ function Slider({ info, title, sliderType, sliderIndex }: ISlider) {
                 whileHover="hover"
                 transition={{ type: "tween" }}
                 bgphoto={makeImagePath(tv.poster_path, "w400")}
-                style={{ width: "100%" }}
+                style={showRank ? { width: "110px" } : { width: "100%" }}
               >
-                <Info variants={infoVariants} whileHover="hover">
+                <Info variants={infoVariants}>
                   <h4>{tv.name}</h4>
                 </Info>
               </Box>

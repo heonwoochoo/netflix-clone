@@ -1,6 +1,4 @@
 import { motion, useAnimation, useScroll } from "framer-motion";
-import { type } from "os";
-import React, { useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
